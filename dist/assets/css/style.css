@@ -234,3 +234,10 @@
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
 }
+
+.spinner {
+  height: 100vh;
+  width: 100%;
+  display: grid;
+  place-items: center;
+}

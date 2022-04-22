@@ -1,0 +1,30 @@
+{
+  "name": "sayna-javascript-morpion",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ony-boom/SAYNA-JAVASCRIPT-MORPION.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ony-boom/SAYNA-JAVASCRIPT-MORPION/issues"
+  },
+  "homepage": "https://github.com/ony-boom/SAYNA-JAVASCRIPT-MORPION#readme",
+  "devDependencies": {
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.8.1"
+  },
+  "dependencies": {
+    "tictactoe-complex-ai": "^1.0.1"
+  }
+}
