@@ -106,7 +106,7 @@ function hasEmptyCell() {
 }
 
 const getAiResponse = async (difficulty) => {
-  let aiInstance = ai.createAI({ level: difficulty, maxResponseTime: 10000 });
+  let aiInstance = ai.createAI({ level: difficulty, maxResponseTime: 1000 });
   const pos = await aiInstance.play(gameBoard);
   return +pos;
 };
