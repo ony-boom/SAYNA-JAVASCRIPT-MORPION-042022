@@ -1,4 +1,7 @@
 const items = document.getElementsByClassName('grid-item');
+const playerXEl = document.getElementById("player-x");
+const playerOEl = document.getElementById("player-o");
+const resetBtn = document.getElementById("reset-btn");
 const itemsArray = Array.from(items);
 
 const gameBoard = [
@@ -8,12 +11,12 @@ const gameBoard = [
 ];
 
 const PLAYERS = {
-	x: {
+	X: {
 		mark: "X",
 		score: 0
 	},
-	o: {
-		mark: "0",
+	O: {
+		mark: "O",
 		score: 0
 	}
 };
@@ -31,18 +34,43 @@ const winningConditionIdx = [
 	[0, 4, 8],
 	[2, 4, 6]
 ]
+let choice = "";
+let turn = "";
+let cpu = "";
 
-let turn = PLAYERS.x.mark;
+function setTurn(event) {
+	choice = event.target.textContent.trim();
+	turn = choice;
+	setCpu();
+	removeLayer();
+}
+
+function setCpu() {
+	if (choice === "X") {
+		cpu = "O"
+	} else {
+		cpu = "X"
+	}
+}
+
+function removeLayer() {
+	toggleBackdrop();
+	document.querySelector(".layer").classList.toggle("d-none");
+}
+
+function toggleBackdrop() {
+	document.querySelector(".backdrop").classList.toggle("d-none");
+}
 
 /**
  * Si le joueur actuel est X, alors le tour est O, sinon le tour est X.
  * @param currentPLayer - Le joueur actuel.
  */
 function switchTurn(currentPLayer) {
-	if (currentPLayer === PLAYERS.x.mark) {
-		turn = PLAYERS.o.mark;
+	if (currentPLayer === PLAYERS.X.mark) {
+		turn = PLAYERS.O.mark;
 	} else {
-		turn = PLAYERS.x.mark
+		turn = PLAYERS.X.mark
 	}
 }
 
@@ -68,23 +96,23 @@ function chooseCase(id) {
 	if (gameBoard[currentItemIdx] !== '' && !haveWinner) {
 		return;
 	}
-	
-	if (turn === PLAYERS.x.mark && !haveWinner) {
-		currentCell.textContent = PLAYERS.x.mark;
-		updateGameBoard(currentItemIdx, PLAYERS.x.mark);
-		setTimeout(cpuTurn, 400); // attendre 4s00ms avant de lancer l'ordinateur
-	} else if (turn === PLAYERS.o.mark && !haveWinner) {
-		currentCell.textContent = PLAYERS.o.mark;
-		updateGameBoard(currentItemIdx, PLAYERS.o.mark);
-		switchTurn(turn);
-	}
-	
 	if (haveWinner) {
 		const winner = getWinner();
 		showWinner(winner);
 		outputScore();
-		reset();
+		return;
 	}
+	
+	if (turn === PLAYERS[choice].mark && !haveWinner) {
+		currentCell.textContent = PLAYERS[choice].mark;
+		updateGameBoard(currentItemIdx, PLAYERS[choice].mark);
+		setTimeout(cpuTurn, 100); // attendre 400ms avant de lancer l'ordinateur
+	} else if (turn === PLAYERS[cpu].mark && !haveWinner) {
+		currentCell.textContent = PLAYERS[cpu].mark;
+		updateGameBoard(currentItemIdx, PLAYERS[cpu].mark);
+		switchTurn(turn);
+	}
+	
 	resetIfNoOneWin();
 }
 
@@ -120,7 +148,6 @@ function getFreeCell() {
 function getCpuChosenElementId() {
 	let freeCell = getFreeCell();
 	return itemsArray[freeCell].id;
-	
 }
 
 /**
@@ -172,10 +199,10 @@ function hasWinner() {
  */
 function getWinner() {
 	let winner = "";
-	if (turn === PLAYERS.o.mark) {
-		winner = PLAYERS.x.mark
-	} else if (turn === PLAYERS.x.mark) {
-		winner = PLAYERS.o.mark
+	if (turn === PLAYERS.O.mark) {
+		winner = PLAYERS.X.mark
+	} else if (turn === PLAYERS.X.mark) {
+		winner = PLAYERS.O.mark
 	}
 	return winner;
 }
@@ -185,10 +212,20 @@ function getWinner() {
  * @param winner - Le gagnant du jeu.
  */
 function showWinner(winner) {
-	if (winner === PLAYERS.x.mark) {
-		alert("You Win! 🤯👏");
-	} else if (winner === PLAYERS.o.mark) {
-		alert("CPU Win! 🙈👀😭😱")
+	const outputEl = document.getElementById("winner-output");
+	const layerBox = document.querySelector(".layer2");
+	toggleBackdrop();
+	if (layerBox.classList.contains("d-none")) {
+		layerBox.classList.replace("d-none", "d-block");
+	} else {
+		layerBox.classList.add("d-block");
+	}
+	if (winner === choice) {
+		// alert("You Win! 🤯👏");
+		outputEl.textContent = "You Win! 🤯👏";
+	} else if (winner === cpu) {
+		// alert("CPU Win! 🙈👀😭😱");
+		outputEl.textContent = "CPU Win! 🙈👀😭😱";
 	}
 	setScore(winner);
 }
@@ -198,11 +235,7 @@ function showWinner(winner) {
  * @param winner - le gagnant du jeu
  */
 function setScore(winner) {
-	if (winner === PLAYERS.x.mark) {
-		PLAYERS.x.score++
-	} else {
-		PLAYERS.o.score++
-	}
+	PLAYERS[winner].score++;
 }
 
 /**
@@ -213,23 +246,24 @@ function outputScore() {
 	const playerScoreOutput = document.getElementById("player-score");
 	const cpuScoreOutput = document.getElementById("cpu-score");
 	
-	playerScoreOutput.textContent = PLAYERS.x.score;
-	cpuScoreOutput.textContent = PLAYERS.o.score;
+	playerScoreOutput.textContent = PLAYERS[choice].score;
+	cpuScoreOutput.textContent = PLAYERS[cpu].score;
 }
 
 /**
  * Il réinitialise le plateau de jeu et le contenu textuel des éléments du itemsArray
  */
 function reset() {
-	for (const item of itemsArray) {
-		item.textContent = '';
+	if (hasWinner()) {
+		toggleBackdrop();
 	}
-	
-	for (let i = 0; i < gameBoard.length ; i++) {
+	document.querySelector(".layer2").classList.replace("d-block", "d-none");
+	for (let i = 0; i < gameBoard.length; i++) {
 		gameBoard[i] = "";
+		itemsArray[i].textContent = "";
 	}
 	
-	if (getWinner() === PLAYERS.x.mark) {
+	if (getWinner() === PLAYERS[choice].mark) {
 		switchTurn(turn);
 	}
 }
@@ -243,3 +277,7 @@ function resetIfNoOneWin() {
 		reset();
 	}
 }
+
+playerXEl.addEventListener("click", setTurn);
+playerOEl.addEventListener("click", setTurn);
+resetBtn.addEventListener("click", reset);
