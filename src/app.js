@@ -1,11 +1,16 @@
 import ai from "tictactoe-complex-ai";
 
 const items = document.getElementsByClassName("grid-item");
+
 const grid = document.getElementById("grid");
 const itemsArray = Array.from(items);
 const spinner = document.querySelector(".spinner");
 
-const gameBoard = ["", "", "", "", "", "", "", "", ""];
+const gameBoard = [
+  "", "", "",
+  "", "", "",
+  "", "", ""
+];
 
 const PLAYERS = {
   x: {
@@ -67,9 +72,9 @@ function getCurrentItemsIndex(currentCell) {
  */
 function chooseCase(id) {
   const haveWinner = hasWinner();
-
   const currentCell = document.getElementById(id);
   const currentItemIdx = getCurrentItemsIndex(currentCell);
+
   if (gameBoard[currentItemIdx] !== "" && !haveWinner) {
     return;
   }
@@ -167,6 +172,7 @@ function updateGameBoard(idx, content) {
  * Si les trois éléments dans une condition gagnante sont identiques et non vides, alors il y a un gagnant
  * @returns Une valeur booléenne.
  */
+
 function hasWinner() {
   let hasWinner = false;
   for (const conditions of winningConditionIdx) {
